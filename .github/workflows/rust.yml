@@ -14,14 +14,35 @@ env:
 
 jobs:
   test:
+    name: Test
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/test')
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Run Tests
-      if: github.event_name == 'issue_comment' && contains(github.event.comment.body, 'deploy dev')
-      run: |
-        gh pr checkout ${{ github.event.issue.number }}
-        cargo test --verbose
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for gh
+      - name: Get PR branch
+        uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+
+      - name: Set latest commit status as pending
+        uses: myrotvorets/set-commit-status-action@master
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+
+      - name: Run Tests
+        run: |
+          cargo test --verbose
+
+      - name: Set latest commit status as ${{ job.status }}
+        uses: myrotvorets/set-commit-status-action@master
+        if: always()
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
