@@ -4,9 +4,10 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    types: [opened, synchronized]
-    branches: [ "main" ]
-  issue_comment: [created, edited]
+    types: [opened, synchronize]
+    branches: [main]
+  issue_comment:
+    types: [created]
 
 env:
   CARGO_TERM_COLOR: always
