@@ -1,4 +1,8 @@
 name: Rust
+permissions:
+  issues: read
+  pull-requests: read
+  contents: read
 
 on:
   push:
