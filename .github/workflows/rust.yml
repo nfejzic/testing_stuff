@@ -3,6 +3,7 @@ permissions:
   issues: read
   pull-requests: read
   contents: read
+  statuses: write
 
 on:
   push:
