@@ -1,4 +1,5 @@
-name: Rust
+name: Test deployed with '/test' comment
+
 permissions:
   issues: read
   pull-requests: read
