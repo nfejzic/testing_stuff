@@ -1,0 +1,26 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    types: [opened, synchronized]
+    branches: [ "main" ]
+  issue_comment: [created, edited]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run Tests
+      if: github.event_name == 'issue_comment' && contains(github.event.comment.body, 'deploy dev')
+      run: |
+        gh pr checkout ${{ github.event.issue.number }}
+        cargo test --verbose
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for gh
